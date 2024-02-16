@@ -1,1 +1,45 @@
-
+name: Run bot
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies and run bot
+        run: |
+          sudo apt -y update && sudo apt -y upgrade
+          sudo apt -y install git ffmpeg curl
+          sudo apt -y remove nodejs
+          curl -fsSl https://deb.nodesource.com/setup_lts.x | sudo bash - && sudo apt -y install nodejs
+          npm install -g yarn
+          sudo yarn global add pm2
+          git clone https://github.com/lyfe00011/whatsapp-bot-md botName
+          cd botName
+          yarn install --network-concurrency 1
+          echo "SESSION_ID = Session_Id_you_Got_After_Scan_Dont_Add_This_Line_If_You_Can_Scan_From_Terminal_Itself
+          PREFIX = .
+          STICKER_PACKNAME = LyFE
+          ALWAYS_ONLINE = false
+          RMBG_KEY = null
+          LANGUAG = en
+          WARN_LIMIT = 3
+          FORCE_LOGOUT = false
+          BRAINSHOP = 159501,6pq8dPiYt7PdqHz3
+          MAX_UPLOAD = 200
+          REJECT_CALL = false
+          SUDO = 989876543210
+          TZ = Asia/Kolkata
+          VPS = true
+          AUTO_STATUS_VIEW = true
+          SEND_READ = true
+          AJOIN = true
+          DISABLE_START_MESSAGE = false
+          PERSONAL_MESSAGE = null" > config.env
+          pm2 start . --name botName --attach --time
